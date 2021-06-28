@@ -11,7 +11,7 @@ const serverlessConfiguration: Serverless = {
             webpackConfig: './webpack.config.js',
             includeModules: true
         },
-        s3: offlineEnv["serverless"]["plugins"]["serverless-s3-local"]
+        s3: offlineEnv['serverless']['plugins']['serverless-s3-local']
     },
     // Add the serverless-webpack plugin
     plugins: ['serverless-webpack', 'serverless-offline'],
@@ -26,13 +26,12 @@ const serverlessConfiguration: Serverless = {
         },
     },
     functions: {
-        hello: {
-            handler: 'handler.hello',
+        getS3AccessForUser: {
+            handler: 'src/getS3AccessForUser/request.handler',
             events: [
                 {
-                    http: {
-                        method: 'get',
-                        path: 'hello',
+                    websocket : {
+                        route : "$connect"
                     }
                 }
             ]
