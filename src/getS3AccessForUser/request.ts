@@ -1,14 +1,14 @@
-import { APIGatewayProxyHandler, APIGatewayProxyEvent, Context } from 'aws-lambda';
+import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { PresignedPost } from '@aws-sdk/s3-presigned-post'; 
 import getS3AccessForUser from './getS3AccessForUser';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-const APIGATEWAY = 'http://localhost:3001/@connections';
+const APIGATEWAY = process.env.APIGATEWAY_WS_ENDPOINT;
 
 export default async function handler (
         event : APIGatewayProxyEvent, 
         context : Context) 
-    : Promise<APIGatewayProxyHandler> {
+    : Promise<AxiosResponse> {
 
     const uid : String = event.requestContext.connectionId;
     
@@ -21,7 +21,7 @@ export default async function handler (
         error = JSON.stringify(error);
     }
 
-    return axios.post(`${APIGATEWAY}/${uid}`, {
+    return await axios.post(`${APIGATEWAY}/${uid}`, {
         presignedPost,
         error
     });
