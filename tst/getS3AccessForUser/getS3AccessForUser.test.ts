@@ -10,20 +10,15 @@ const mockCreatePresignedPost : MockedFunctionDeep<typeof createPresignedPost> =
         mocked(createPresignedPost, true);
 
 const UID = "1";
-const BUCKET = "BUCKET";
-const KEY = `${UID}/upload`;
-const DURATION_SECONDS = 120;
-const PRESIGNED_POST : PresignedPost = getFixturePresignedPost();
+const PRESIGNED_POST : PresignedPost = {
+    url : 'url',
+    fields : {
+        'field1' : 'field1',
+        'field2' : 'field2'
+    }
+};
 
-beforeAll(function(){
-    process.env.s3host = 'localhost';
-    process.env.s3port = '8000';
-    process.env.s3accessKeyId = 's3accessKeyId';
-    process.env.s3secretAccessKey = 's3secretAccessKey';
-    process.env.s3bucket = BUCKET;
-});
-
-test('Gets S3 Access for User for BUCKET/KEY lasting DURATION_SECONDS', async function() {
+test('Get S3 Access for User for BUCKET/KEY lasting DURATION_SECONDS', async function() {
     mockCreatePresignedPost.mockResolvedValue(PRESIGNED_POST);
 
     const presignedPost : PresignedPost = await getS3AccessForUser(UID);
@@ -32,20 +27,9 @@ test('Gets S3 Access for User for BUCKET/KEY lasting DURATION_SECONDS', async fu
     expect(mockCreatePresignedPost).toHaveBeenCalledWith(
         expect.any(S3Client), 
         {
-            Bucket : BUCKET,
-            Key : KEY,
-            Expires: DURATION_SECONDS
+            Bucket : process.env.S3_BUCKET,
+            Key : `${UID}/${process.env.S3_KEYSUFFIX}`,
+            Expires: Number.parseInt(process.env.S3_DURATIONSECONDS)
         });
 });
-
-function getFixturePresignedPost() : PresignedPost {
-    return {
-        url : 'url',
-        fields : {
-            'field1' : 'field1',
-            'field2' : 'field2'
-        }
-    };
-}
-
 
