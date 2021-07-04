@@ -1,5 +1,7 @@
 import { S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
 import { createPresignedPost, PresignedPost, PresignedPostOptions } from '@aws-sdk/s3-presigned-post'; 
+import ENVIRONMENT from 'src/environment';
+
 
 export default async function getS3AccessForUser(uid : String) : Promise<PresignedPost> {
     return createPresignedPost(
@@ -9,9 +11,9 @@ export default async function getS3AccessForUser(uid : String) : Promise<Presign
 
 function getPresignedPostOptions(uid : String) : PresignedPostOptions {
     return {
-        Bucket : process.env.S3_BUCKET,
-        Key : `${uid}/${process.env.S3_KEYSUFFIX}`,
-        Expires: Number.parseInt(process.env.S3_DURATIONSECONDS)
+        Bucket : ENVIRONMENT.S3.BUCKET,
+        Key : `${uid}/${ENVIRONMENT.S3.KEYSUFFIX}`,
+        Expires: Number.parseInt(ENVIRONMENT.S3.DURATIONSECONDS)
     }
 }
 
@@ -20,10 +22,10 @@ function getS3ClientConfig() : S3ClientConfig {
     // if devo...
     return {
         forcePathStyle : true,
-        endpoint : `http://${process.env.S3_HOST}:${process.env.S3_PORT}`,
+        endpoint : `http://${ENVIRONMENT.S3.HOST}:${ENVIRONMENT.S3.PORT}`,
         credentials : {
-            accessKeyId : process.env.S3_ACCESSKEYID,
-            secretAccessKey : process.env.S3_SECRETACCESSKEY,
+            accessKeyId : ENVIRONMENT.S3.ACCESSKEYID,
+            secretAccessKey : ENVIRONMENT.S3.SECRETACCESSKEY,
         }
     };
 }

@@ -2,8 +2,7 @@ import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { PresignedPost } from '@aws-sdk/s3-presigned-post'; 
 import getS3AccessForUser from './getS3AccessForUser';
 import axios, { AxiosResponse } from 'axios';
-
-const APIGATEWAY = process.env.APIGATEWAY_WS_ENDPOINT;
+import ENVIRONMENT from 'src/environment';
 
 export default async function handler (
         event : APIGatewayProxyEvent, 
@@ -21,8 +20,10 @@ export default async function handler (
         error = JSON.stringify(error);
     }
 
-    return await axios.post(`${APIGATEWAY}/${uid}`, {
-        presignedPost,
-        error
-    });
+    return await axios.post(
+        `${ENVIRONMENT.APIGATEWAY.WS.ENDPOINT}/${uid}`, 
+        {
+            presignedPost,
+            error 
+        });
 }
